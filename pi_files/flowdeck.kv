@@ -1,0 +1,186 @@
+#:kivy 2.1.0
+
+<SliderColumn>:
+    orientation: 'vertical'
+    spacing: '5dp'
+    level: 0.0
+    is_muted: False
+    label_text: ''
+    index: 0
+    Slider:
+        id: slider
+        orientation: 'vertical'
+        min: 0
+        max: 1
+        step: 0.01
+        value: root.level
+        on_value: app.set_group_level(root.index, self.value) if root.index != -1 else app.set_master_level(self.value)
+    Button:
+        text: 'MUTE'
+        size_hint_y: 0.15
+        background_color: (0.8, 0.2, 0.2, 1) if root.is_muted else (0.3, 0.3, 0.3, 1)
+        background_normal: ''
+        on_release: app.set_group_mute(root.index) if root.index != -1 else app.set_master_mute()
+    Label:
+        text: root.label_text
+        size_hint_y: 0.1
+        halign: 'center'
+        valign: 'middle'
+
+<FXSlider>:
+    orientation: 'vertical'
+    spacing: '5dp'
+    slider_id: ''
+    value: 0.0
+    size_hint_y: None
+    height: '80dp'
+    Label:
+        text: root.slider_id.replace('_', ' ').capitalize()
+        # Let the label size itself based on its content
+        size_hint_y: None
+        height: self.texture_size[1]
+        font_size: '15sp'
+        halign: 'center'
+    Slider:
+        min: 0.0
+        max: 1.0
+        value: root.value
+        on_value: app.set_fx(root.slider_id, self.value)
+    Label:
+        text: f"{int(root.value * 100)}%"
+        size_hint_y: None
+        height: '20dp'
+
+<RootWidget>:
+    Carousel:
+        id: carousel
+        direction: 'right'
+        loop: True
+        AudioMixerPage:
+        VoiceFXPage:
+        StreamDeckPage:
+        MediaControlPage:
+
+<AudioMixerPage>:
+    cols: 4
+    padding: '20dp'
+    spacing: '20dp'
+    SliderColumn:
+        label_text: 'Master'
+        level: app.master_level
+        is_muted: app.master_muted
+        index: -1
+    SliderColumn:
+        label_text: app.group_names[0] if app.group_names else ''
+        level: app.group_levels[0]
+        is_muted: app.group_mutes[0]
+        index: 0
+    SliderColumn:
+        label_text: app.group_names[1] if len(app.group_names) > 1 else ''
+        level: app.group_levels[1]
+        is_muted: app.group_mutes[1]
+        index: 1
+    SliderColumn:
+        label_text: app.group_names[2] if len(app.group_names) > 2 else ''
+        level: app.group_levels[2]
+        is_muted: app.group_mutes[2]
+        index: 2
+
+<VoiceFXPage>:
+    cols: 2
+    padding: 20
+    spacing: 20
+    GridLayout:
+        cols: 2
+        rows: 2
+        spacing: 25
+        size_hint_x: 0.7
+        padding: [0, 20, 0, 20]
+
+        FXSlider:
+            slider_id: 'pitch'
+            value: app.fx_knobs[0]
+        FXSlider:
+            slider_id: 'reverb'
+            value: app.fx_knobs[1]
+        FXSlider:
+            slider_id: 'mic_volume'
+            value: app.fx_knobs[2]
+        FXSlider:
+            slider_id: 'echo'
+            value: app.fx_knobs[3]
+            
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 15
+        size_hint_x: 0.3
+        Button:
+            text: "MUTE MIC"
+            background_color: (0.8, 0.2, 0.2, 1) if app.mic_muted else (0.2, 0.8, 0.2, 1)
+            background_normal: ''
+            on_release: app.set_mic_mute()
+        GridLayout:
+            cols: 1
+            spacing: 10
+            ToggleButton:
+                text: app.preset_names[0] if app.preset_names else 'P1'
+                group: 'presets'
+                state: 'down' if app.active_preset == 0 else 'normal'
+                on_press: app.load_preset(0)
+            ToggleButton:
+                text: app.preset_names[1] if len(app.preset_names) > 1 else 'P2'
+                group: 'presets'
+                state: 'down' if app.active_preset == 1 else 'normal'
+                on_press: app.load_preset(1)
+            ToggleButton:
+                text: app.preset_names[2] if len(app.preset_names) > 2 else 'P3'
+                group: 'presets'
+                state: 'down' if app.active_preset == 2 else 'normal'
+                on_press: app.load_preset(2)
+
+<StreamDeckPage>:
+    cols: 3
+    padding: 20
+    spacing: 15
+    Button:
+        disabled: not app.stream_deck_buttons
+        text: app.stream_deck_buttons[0]['friendly_name'] if app.stream_deck_buttons else ''
+        on_press: app.stream_deck_action(app.stream_deck_buttons[0]['executable_name']) if app.stream_deck_buttons else None
+    Button:
+        disabled: len(app.stream_deck_buttons) <= 1
+        text: app.stream_deck_buttons[1]['friendly_name'] if len(app.stream_deck_buttons) > 1 else ''
+        on_press: app.stream_deck_action(app.stream_deck_buttons[1]['executable_name']) if len(app.stream_deck_buttons) > 1 else None
+    Button:
+        disabled: len(app.stream_deck_buttons) <= 2
+        text: app.stream_deck_buttons[2]['friendly_name'] if len(app.stream_deck_buttons) > 2 else ''
+        on_press: app.stream_deck_action(app.stream_deck_buttons[2]['executable_name']) if len(app.stream_deck_buttons) > 2 else None
+    Button:
+        disabled: len(app.stream_deck_buttons) <= 3
+        text: app.stream_deck_buttons[3]['friendly_name'] if len(app.stream_deck_buttons) > 3 else ''
+        on_press: app.stream_deck_action(app.stream_deck_buttons[3]['executable_name']) if len(app.stream_deck_buttons) > 3 else None
+    Button:
+        disabled: len(app.stream_deck_buttons) <= 4
+        text: app.stream_deck_buttons[4]['friendly_name'] if len(app.stream_deck_buttons) > 4 else ''
+        on_press: app.stream_deck_action(app.stream_deck_buttons[4]['executable_name']) if len(app.stream_deck_buttons) > 4 else None
+    Button:
+        disabled: len(app.stream_deck_buttons) <= 5
+        text: app.stream_deck_buttons[5]['friendly_name'] if len(app.stream_deck_buttons) > 5 else ''
+        on_press: app.stream_deck_action(app.stream_deck_buttons[5]['executable_name']) if len(app.stream_deck_buttons) > 5 else None
+
+<MediaControlPage>:
+    cols: 1
+    padding: 50
+    spacing: 20
+    Button:
+        text: '<<  Previous'
+        font_size: '20sp'
+        on_release: app.media_control('prevtrack')
+    Button:
+        text: 'Play / Pause'
+        font_size: '20sp'
+        on_release: app.media_control('playpause')
+    Button:
+        text: 'Next  >>'
+        font_size: '20sp'
+        on_release: app.media_control('nexttrack')
+
