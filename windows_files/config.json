@@ -1,0 +1,29 @@
+{
+  "audio_devices": {
+    "input_device_name": "PASTE_HERE",
+    "output_device_name": "PASTE_HERE"
+  },
+  "audio_mixer_groups": [
+    { "name": "Games", "apps": ["helldivers2.exe", "FortniteClient-Win64-Shipping.exe"] },
+    { "name": "Browsers", "apps": ["chrome.exe", "msedge.exe", "firefox.exe"] },
+    { "name": "Discord", "apps": ["Discord.exe"] }
+  ],
+  "voice_presets": [
+    { "name": "Default", "values": { "reverb": 0.0, "echo": 0.0, "pitch": 0.5 }},
+    { "name": "Robot", "values": { "reverb": 0.2, "echo": 0.1, "pitch": 0.7 }},
+    { "name": "Cave", "values": { "reverb": 0.9, "echo": 0.8, "pitch": 0.4 }}
+  ],
+  "stream_deck_buttons": [
+    { "executable_name": "spotify.exe", "friendly_name": "Spotify" },
+    { "executable_name": "chrome.exe", "friendly_name": "Chrome" },
+    { "executable_name": "obs64.exe", "friendly_name": "OBS" },
+    { "executable_name": "Discord.exe", "friendly_name": "Discord" },
+    { "executable_name": "notepad.exe", "friendly_name": "Notepad" },
+    { "executable_name": "calc.exe", "friendly_name": "Calc" }
+  ]
+}
+
+
+
+
+
