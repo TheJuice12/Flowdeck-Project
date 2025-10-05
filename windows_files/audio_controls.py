@@ -7,7 +7,7 @@ import os
 import json
 import threading
 
-# A lock to prevent race conditions when writing to fx_state.json
+
 FX_STATE_LOCK = threading.Lock()
 
 def set_master_volume(level):
@@ -51,12 +51,10 @@ def set_mic_mute(is_muted):
         volume.SetMute(is_muted, None)
     except Exception: pass
 
-# New function to control microphone volume with nircmd
+
 def set_mic_volume(level):
     try:
-        # nircmd volume is 0-65535, so we scale the 0.0-1.0 value
         volume_level = int(float(level) * 65535)
-        # Using "default_record" for compatibility with modern Windows
         subprocess.run(f"nircmd.exe setsysvolume {volume_level} default_record", shell=True, check=False, creationflags=0x08000000)
     except Exception as e:
         print(f"Error setting mic volume: {e}")
@@ -128,7 +126,6 @@ def update_full_state(state_dict, config):
             else:
                 state_dict["audio"]["groups"].append({"level": -1, "muted": False})
         
-        # Get microphone state using pycaw
         mic_vol_interface = AudioUtilities.GetMicrophone().Activate(IAudioEndpointVolume._iid_, 1, None)
         mic_volume = cast(mic_vol_interface, POINTER(IAudioEndpointVolume))
         state_dict["voice"]["mic_mute"] = bool(mic_volume.GetMute())
@@ -147,4 +144,5 @@ def update_full_state(state_dict, config):
     except Exception: pass
     finally:
         CoUninitialize()
+
 
