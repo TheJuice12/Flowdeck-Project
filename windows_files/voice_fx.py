@@ -42,8 +42,6 @@ def audio_processing_thread():
         board[1].mix = 1.0 if fx_state.get('echo', 0.0) > 0.05 else 0.0
         board[2].semitones = (fx_state.get('pitch', 0.5) - 0.5) * 24
         
-        # Removed morph effect logic
-        
         outdata[:] = board(indata, 48000)
 
     try:
@@ -58,4 +56,5 @@ def audio_processing_thread():
 
 if __name__ == "__main__":
     audio_processing_thread()
+
 
